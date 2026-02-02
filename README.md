@@ -42,8 +42,9 @@ Xây dựng hệ thống **phân loại tổn thương da** dựa trên metadata
 - **Thuật toán**: Support Vector Machine (SVM)
 - **Tinh chỉnh siêu tham số**: Optuna + GridSearchCV
 - **Visualization**:
+  - tSNE 
   - ROC Curve & AUC
-  - PCA (trực quan hóa)
+  - PCA (chỉ để trực quan hóa)
   - Confusion Matrix
 - **Đầu ra**: Xác suất ác tính (`predict_proba`)
 - **Ngưỡng phân loại**:  
@@ -67,17 +68,15 @@ Xây dựng hệ thống **phân loại tổn thương da** dựa trên metadata
 - **Thuật toán**: SVM (One-vs-Rest – scikit-learn)
 - **Tinh chỉnh siêu tham số**: Optuna + GridSearchCV
 - **Visualization**:
+  - tSNE 
   - Confusion Matrix
 - **Đầu ra**: Xác suất cho từng lớp bệnh
 - **Quy tắc dự đoán**:  
-  - Chọn lớp có xác suất cao nhất (**argmax**)
-
-📌 Ngoài kết quả đa lớp, hệ thống còn **đánh giá nguy cơ ác tính** bằng cách tổng hợp xác suất của các lớp:
-- Melanoma  
-- Basal Cell Carcinoma  
-- Actinic Keratoses  
-
-Cách tiếp cận này phù hợp với **mục tiêu y khoa**.
+  - One-vs-Rest (OvR) => Mẫu được gán vào lớp mà SVM “tự tin nhất” (xa biên nhất)
+  - Phạt nặng hơn nếu dự đoán sai ( class_weight='balanced')
+- **Quy tắc đánh giá**:
+  - scoring="f1_macro" => Mỗi lớp được coi là quan trọng ngang nhau
+  - average="macro" => F1 được tính riêng từng lớp, sau đó lấy trung bình
 
 ---
 
@@ -90,17 +89,15 @@ Cách tiếp cận này phù hợp với **mục tiêu y khoa**.
 - **F1-score**: 0.8446  
 - **AUC**: 0.8686  
 
-📌 Recall cao cho thấy mô hình **ít bỏ sót các ca ác tính**.
+=> Recall cao cho thấy mô hình **ít bỏ sót các ca ác tính**.
 
 ### Multi-class Classification
-- **Accuracy**: 0.7299  
-- **Precision**: 0.6955  
-- **Recall**: 0.7299  
-- **F1-score**: 0.7051  
+- **Accuracy**: 0.6256 
+- **Precision**: 0.3833  
+- **Recall**: 0.5518  
+- **F1-score**: 0.3937  
 
-📌 F1-score thấp hơn do:
-- Dữ liệu **mất cân bằng**
-- Recall của các lớp hiếm (đặc biệt **Melanoma**) còn hạn chế
+=> F1-score thấp do: dữ liệu **mất cân bằng**
 
 ---
 
